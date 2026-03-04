@@ -1,0 +1,2 @@
+# wasm-obfuscator
+wasm obfuscator
