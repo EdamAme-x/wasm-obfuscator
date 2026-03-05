@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "sync:fixtures": "node scripts/sync-fixtures.mjs",
-    "predev": "pnpm run sync:fixtures",
+    "sync:browser": "node ../scripts/generate-browser-module.mjs playground/src/generated/moonbit-obfuscator-browser.mjs",
+    "predev": "pnpm run sync:fixtures && pnpm run sync:browser",
     "dev": "vite",
-    "prebuild": "pnpm run sync:fixtures",
+    "prebuild": "pnpm run sync:fixtures && pnpm run sync:browser",
     "build": "vite build",
     "preview": "vite preview",
     "test:e2e": "playwright test"

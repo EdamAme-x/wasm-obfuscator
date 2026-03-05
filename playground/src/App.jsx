@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import Editor from "@monaco-editor/react";
 import fixtures from "@/generated/fixtures.json";
+import { obfuscateBytes } from "@/generated/moonbit-obfuscator-browser.mjs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +25,10 @@ function hexToBytes(hexInput) {
     out[i / 2] = Number.parseInt(hex.slice(i, i + 2), 16);
   }
   return out;
+}
+
+function bytesToHex(bytes) {
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 export default function App() {
@@ -51,39 +56,37 @@ export default function App() {
 
   async function onRun() {
     try {
+      const seedValue = Number(seed);
+      if (!Number.isInteger(seedValue)) {
+        throw new Error("Seed must be an integer.");
+      }
+      const maxSizeGrowthPercent = Number(noiseSections) * Number(payloadBytes) * 200 + 100;
+
+      let inputBytes;
       if (format === "wasm-hex") {
         // Keep local validation errors deterministic for editor UX and E2E checks.
-        hexToBytes(input);
+        inputBytes = hexToBytes(input);
       } else if (input.trim().length === 0) {
         throw new Error("Input is empty.");
+      } else {
+        inputBytes = new TextEncoder().encode(input);
       }
 
-      const response = await fetch("/api/obfuscate", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json"
-        },
-        body: JSON.stringify({
-          format,
-          input,
-          seed: Number(seed),
-          maxSizeGrowthPercent: Number(noiseSections) * Number(payloadBytes) * 200 + 100,
-          maxRuntimeSlowdownPercent: 10000,
-          spy: false
-        })
+      const result = obfuscateBytes({
+        inputBytes,
+        inputFormat: format === "wat" ? "wat" : "wasm",
+        seed: seedValue,
+        maxSizeGrowthPercent,
+        maxRuntimeSlowdownPercent: 10000,
+        spy: false
       });
-
-      const body = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(body.error ?? `Request failed (${response.status})`);
-      }
-
-      setOutput(String(body.outputHex ?? ""));
+      const metrics = result.metrics ?? {};
+      setOutput(bytesToHex(result.outputBytes ?? new Uint8Array()));
       setStatus("Success");
       setStats({
-        inputSize: Number(body.inputSize ?? 0),
-        outputSize: Number(body.outputSize ?? 0),
-        growth: Number(body.growth ?? 0)
+        inputSize: Number(metrics.inputSize ?? metrics.input_size ?? 0),
+        outputSize: Number(metrics.outputSize ?? metrics.output_size ?? 0),
+        growth: Number(metrics.sizeGrowthPercent ?? metrics.size_growth_percent ?? 0)
       });
     } catch (error) {
       setStatus(`Error: ${error instanceof Error ? error.message : String(error)}`);
@@ -98,7 +101,7 @@ export default function App() {
         <CardHeader>
           <CardTitle>wasm-obfuscator Playground</CardTitle>
           <CardDescription>
-            React + Vite + shadcn + Monaco. Obfuscation run uses MoonBit CLI through local API middleware.
+            Runs fully in the browser with generated MoonBit JS runtime (no server middleware).
           </CardDescription>
         </CardHeader>
       </Card>

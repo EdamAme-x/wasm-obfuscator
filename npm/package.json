@@ -1,11 +1,23 @@
 {
   "name": "wasm-obfuscator",
-  "version": "0.1.2",
-  "description": "CLI-first Node wrapper for the MoonBit wasm-obfuscator",
+  "version": "0.1.3",
+  "description": "MoonBit-based WebAssembly obfuscator for Node.js and browsers",
   "license": "MIT",
   "type": "commonjs",
   "main": "index.js",
   "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "require": "./index.js",
+      "default": "./index.js"
+    },
+    "./browser": {
+      "types": "./browser.d.ts",
+      "import": "./browser.mjs",
+      "default": "./browser.mjs"
+    }
+  },
   "bin": {
     "wasm-obfuscator": "dist/cli.js"
   },
@@ -13,6 +25,8 @@
     "dist",
     "index.js",
     "index.d.ts",
+    "browser.mjs",
+    "browser.d.ts",
     "README.md"
   ],
   "scripts": {

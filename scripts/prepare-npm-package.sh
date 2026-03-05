@@ -16,6 +16,8 @@ fi
 
 "$moon_cmd" build cmd/main --target js --release
 
+SKIP_MOON_BUILD=1 node scripts/generate-browser-module.mjs npm/browser.mjs
+
 mkdir -p npm/dist
 {
   echo '#!/usr/bin/env node'
@@ -23,4 +25,4 @@ mkdir -p npm/dist
 } > npm/dist/cli.js
 chmod +x npm/dist/cli.js
 
-echo "prepared npm/dist/cli.js"
+echo "prepared npm/dist/cli.js and npm/browser.mjs"

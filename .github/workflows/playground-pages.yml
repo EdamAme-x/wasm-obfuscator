@@ -7,6 +7,14 @@ on:
     paths:
       - "playground/**"
       - "obfuscator/fixtures_impl.mbt"
+      - "obfuscator/**"
+      - "engine/**"
+      - "parser/**"
+      - "passes/**"
+      - "internal/**"
+      - "cmd/main/**"
+      - "moon.mod.json"
+      - "scripts/generate-browser-module.mjs"
       - ".github/workflows/playground-pages.yml"
   workflow_dispatch:
 
@@ -40,11 +48,23 @@ jobs:
         with:
           version: 10
 
+      - name: Install MoonBit
+        run: |
+          set -euo pipefail
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Update MoonBit registry
+        run: moon update
+
       - name: Install dependencies
         run: pnpm --dir playground install --frozen-lockfile
 
       - name: Sync playground fixtures
         run: pnpm --dir playground run sync:fixtures
+
+      - name: Sync playground browser runtime
+        run: pnpm --dir playground run sync:browser
 
       - name: Build playground
         env:

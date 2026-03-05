@@ -43,6 +43,21 @@ obfuscateFile({
 });
 ```
 
+Browser API (ESM):
+
+```js
+import { obfuscateBytes } from "wasm-obfuscator/browser";
+
+const inputBytes = await fetch("/input.wasm").then((res) => res.arrayBuffer());
+const result = obfuscateBytes({
+  inputBytes,
+  inputFormat: "wasm",
+  seed: 123,
+});
+
+console.log(result.metrics.sizeGrowthPercent);
+```
+
 ## CLI Options
 
 - Positional: `<input.(wasm|wat)>`
@@ -66,7 +81,7 @@ obfuscateFile({
 - `-h, --help`
   - Show CLI help.
 
-## Current Obfuscation Behavior (v0.1.2)
+## Current Obfuscation Behavior (v0.1.3)
 
 The default pipeline runs these passes in order:
 
@@ -129,9 +144,12 @@ bash tests/npm/wrapper/wrapper_e2e.sh
 - Path: `playground/`
 - Theme: dark
 - Fixture data is synced from `obfuscator/fixtures_impl.mbt` at build/dev time.
+- Browser obfuscation runtime is generated from latest MoonBit source at build/dev time.
+- No backend middleware is required; runs on static hosting (GitHub Pages).
 
 ```bash
 pnpm --dir playground install --frozen-lockfile
+pnpm --dir playground run sync:browser
 pnpm --dir playground run dev
 pnpm --dir playground run build
 pnpm --dir playground run test:e2e

@@ -78,15 +78,18 @@ jobs:
           grep -q "package/dist/cli.js" /tmp/pnpm-pack-files.txt
           grep -q "package/index.js" /tmp/pnpm-pack-files.txt
           grep -q "package/index.d.ts" /tmp/pnpm-pack-files.txt
+          grep -q "package/browser.mjs" /tmp/pnpm-pack-files.txt
+          grep -q "package/browser.d.ts" /tmp/pnpm-pack-files.txt
           grep -q "package/README.md" /tmp/pnpm-pack-files.txt
 
       - name: Install playground dependencies
         run: pnpm --dir playground install --frozen-lockfile
 
-      - name: Verify playground fixtures are synced
+      - name: Verify playground generated assets are synced
         run: |
           pnpm --dir playground run sync:fixtures
-          git diff --exit-code -- playground/src/generated/fixtures.json
+          pnpm --dir playground run sync:browser
+          git diff --exit-code -- playground/src/generated/fixtures.json playground/src/generated/moonbit-obfuscator-browser.mjs
 
       - name: Build playground
         run: pnpm --dir playground run build

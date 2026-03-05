@@ -38,6 +38,28 @@ obfuscateFile({
 });
 ```
 
+## Browser API (ESM)
+
+```js
+import { obfuscateBytes } from "wasm-obfuscator/browser";
+
+const inputBytes = await fetch("/input.wasm").then((res) => res.arrayBuffer());
+const result = obfuscateBytes({
+  inputBytes,
+  inputFormat: "wasm",
+  seed: 123,
+});
+
+console.log(result.metrics.sizeGrowthPercent);
+```
+
+Notes:
+
+- Browser API runs fully client-side (no Node `fs`/`child_process`).
+- `inputBytes` supports `Uint8Array`, `ArrayBuffer`, and typed-array views.
+- `inputFormat` can be `"wasm"`, `"wat"`, or `"auto"`.
+- Returned `metrics` has both camelCase and snake_case keys for compatibility.
+
 ## CLI Options
 
 - `<input.(wasm|wat)>` (required)
@@ -52,10 +74,10 @@ obfuscateFile({
 
 - `inputBytes` (required): `Buffer | Uint8Array | ArrayBuffer`
 - `inputFormat` (optional): `"wasm" | "wat" | "auto"` (default: `"auto"`)
-  - `auto` は wasm ヘッダ (`00 61 73 6d 01 00 00 00`) を優先判定し、非 wasm は WAT らしさ（`(module` など）を見て判定
+  - `auto` prioritizes wasm magic header detection (`00 61 73 6d 01 00 00 00`) and falls back to WAT-like text heuristics (`(module`, etc.).
 - `seed` / `spy` / budget options are the same as `obfuscateFile`
 
-## Current Obfuscation Behavior (v0.1.2)
+## Current Obfuscation Behavior (v0.1.3)
 
 - Runs 5 passes in order:
   - `RenameIdentifiers` (currently adds `wobf.rename` custom section; no real symbol rename yet)
