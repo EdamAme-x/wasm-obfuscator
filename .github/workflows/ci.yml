@@ -25,6 +25,9 @@ jobs:
       - name: Show MoonBit version
         run: moon version
 
+      - name: Update MoonBit registry
+        run: moon update
+
       - name: Format check
         run: moon fmt --check
 
