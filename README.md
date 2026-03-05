@@ -2,6 +2,8 @@
 
 MoonBit-based toolkit for deterministic, semantics-preserving Wasm/WAT obfuscation.
 
+Playground: [https://edamame-x.github.io/wasm-obfuscator](https://edamame-x.github.io/wasm-obfuscator)
+
 ## Install
 
 ```bash
