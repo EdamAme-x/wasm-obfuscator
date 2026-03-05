@@ -1,0 +1,95 @@
+name: moonbit-ci
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  moonbit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install MoonBit
+        run: |
+          set -euo pipefail
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Show MoonBit version
+        run: moon version
+
+      - name: Format check
+        run: moon fmt --check
+
+      - name: Type check all backends
+        run: moon check --target all
+
+      - name: Run tests on js target
+        run: moon test --target js
+
+      - name: Run tests on wasm-gc target
+        run: moon test --target wasm-gc
+
+      - name: CLI smoke test
+        run: bash tests/cli/smoke.sh
+
+      - name: CLI end-to-end test
+        run: bash tests/cli/e2e.sh
+
+      - name: CLI option/error matrix test
+        run: bash tests/cli/options/error_matrix.sh
+
+      - name: Build wasm-gc artifact
+        run: moon build --target wasm-gc --release
+
+      - name: Build js artifact
+        run: moon build --target js --release
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Prepare npm wrapper dist
+        run: bash scripts/prepare-npm-package.sh
+
+      - name: npm wrapper e2e test
+        run: bash tests/npm/wrapper/wrapper_e2e.sh
+
+      - name: Verify package pack payload
+        run: |
+          tarball=$(pnpm --dir npm pack --pack-destination /tmp | tail -n 1)
+          tar -tf "${tarball}" > /tmp/pnpm-pack-files.txt
+          grep -q "package/dist/cli.js" /tmp/pnpm-pack-files.txt
+          grep -q "package/index.js" /tmp/pnpm-pack-files.txt
+          grep -q "package/index.d.ts" /tmp/pnpm-pack-files.txt
+          grep -q "package/README.md" /tmp/pnpm-pack-files.txt
+
+      - name: Install playground dependencies
+        run: pnpm --dir playground install --frozen-lockfile
+
+      - name: Verify playground fixtures are synced
+        run: |
+          pnpm --dir playground run sync:fixtures
+          git diff --exit-code -- playground/src/generated/fixtures.json
+
+      - name: Build playground
+        run: pnpm --dir playground run build
+
+      - name: Install Playwright browser
+        run: pnpm --dir playground exec playwright install --with-deps chromium
+
+      - name: Run playground e2e
+        run: pnpm --dir playground run test:e2e

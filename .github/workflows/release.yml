@@ -1,0 +1,88 @@
+name: release-publish
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish-npm:
+    if: ${{ secrets.NPM_TOKEN != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install MoonBit
+        run: |
+          set -euo pipefail
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Prepare npm wrapper dist
+        run: bash scripts/prepare-npm-package.sh
+
+      - name: Verify tag matches npm package version
+        run: |
+          tag_version="${GITHUB_REF_NAME#v}"
+          pkg_version="$(node -p "require('./npm/package.json').version")"
+          if [[ "$tag_version" != "$pkg_version" ]]; then
+            echo "tag version ($tag_version) does not match npm/package.json ($pkg_version)" >&2
+            exit 1
+          fi
+
+      - name: Publish npm package (via pnpm)
+        run: pnpm publish --access public
+        working-directory: npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-mooncakes:
+    if: ${{ secrets.MOON_CREDENTIALS_JSON != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install MoonBit
+        run: |
+          set -euo pipefail
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Restore Moon credentials
+        run: |
+          mkdir -p "$HOME/.moon"
+          printf '%s' '${{ secrets.MOON_CREDENTIALS_JSON }}' > "$HOME/.moon/credentials.json"
+          chmod 600 "$HOME/.moon/credentials.json"
+
+      - name: Verify tag matches moon.mod.json version
+        run: |
+          tag_version="${GITHUB_REF_NAME#v}"
+          mod_version="$(python3 -c "import json;print(json.load(open('moon.mod.json'))['version'])")"
+          if [[ "$tag_version" != "$mod_version" ]]; then
+            echo "tag version ($tag_version) does not match moon.mod.json ($mod_version)" >&2
+            exit 1
+          fi
+
+      - name: Publish MoonBit module to Mooncakes
+        run: moon publish --frozen

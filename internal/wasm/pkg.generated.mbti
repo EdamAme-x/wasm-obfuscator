@@ -1,0 +1,14 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "edamame-x/wasm-obfuscator/internal/wasm"
+
+// Values
+pub fn encode_u32_leb(Int) -> Bytes
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,4 @@
+{
+  "minimalWasmHex": "0061736d0100000001070160027f7f017f030201000707010361646400000a09010700200020016a0b",
+  "minimalWat": "(module (func (export \"add\") (param i32 i32) (result i32) local.get 0 local.get 1 i32.add))"
+}

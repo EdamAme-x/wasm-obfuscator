@@ -1,0 +1,24 @@
+{
+  "name": "wasm-obfuscator",
+  "version": "0.1.2",
+  "description": "CLI-first Node wrapper for the MoonBit wasm-obfuscator",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "bin": {
+    "wasm-obfuscator": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "prepare-dist": "bash ../scripts/prepare-npm-package.sh"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

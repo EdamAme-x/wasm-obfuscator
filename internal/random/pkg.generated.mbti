@@ -1,0 +1,18 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "edamame-x/wasm-obfuscator/internal/random"
+
+// Values
+pub fn new(Int) -> LcgState
+
+// Errors
+
+// Types and methods
+pub(all) struct LcgState {
+  mut state : UInt
+}
+pub fn LcgState::next_byte(Self) -> Byte
+
+// Type aliases
+
+// Traits
+

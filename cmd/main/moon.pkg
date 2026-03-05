@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/env",
+  "moonbitlang/core/strconv",
+  "moonbitlang/x/fs",
+  "edamame-x/wasm-obfuscator/obfuscator",
+}
+
+options(
+  "is-main": true,
+)

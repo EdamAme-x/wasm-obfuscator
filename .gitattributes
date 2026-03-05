@@ -1,0 +1,32 @@
+# Normalize text files to LF by default.
+* text=auto eol=lf
+
+# Keep Windows script endings on CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Source files that must stay LF.
+*.sh text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.mbt text eol=lf
+*.mbti text eol=lf
+*.mbt.md text eol=lf
+
+# Binary artifacts.
+*.wasm binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+*.tgz binary

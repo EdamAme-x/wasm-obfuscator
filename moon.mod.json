@@ -1,0 +1,20 @@
+{
+  "name": "edamame-x/wasm-obfuscator",
+  "version": "0.1.0",
+  "deps": {
+    "moonbitlang/x": "0.4.40"
+  },
+  "readme": "README.md",
+  "repository": "https://github.com/EdamAme-x/wasm-obfuscator",
+  "license": "MIT",
+  "keywords": [
+    "wasm",
+    "wat",
+    "parser",
+    "cli",
+    "npm",
+    "obfuscation",
+    "moonbit"
+  ],
+  "description": "Semantics-preserving WebAssembly/WAT obfuscation toolkit and CLI implemented in MoonBit."
+}

@@ -1,0 +1,43 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# MoonBit build/cache
+_build/
+.moon/
+.mooncakes/
+target
+target/
+trace.json
+
+# Node / npm
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# Generated package artifacts
+*.tgz
+npm/dist/
+
+# Frontend build/test artifacts
+playground/dist/
+playground/test-results/
+playground/playwright-report/
+
+# Generic logs and coverage
+logs/
+*.log
+coverage/
+.nyc_output/
+
+# Agents
+.agents/
+TODO.md
+AGENTS.md
+docs/

@@ -1,0 +1,5 @@
+import {
+  "edamame-x/wasm-obfuscator/engine",
+  "edamame-x/wasm-obfuscator/parser",
+  "edamame-x/wasm-obfuscator/passes/rewriter",
+}

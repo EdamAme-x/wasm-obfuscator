@@ -1,0 +1,4 @@
+import {
+  "edamame-x/wasm-obfuscator/obfuscator",
+  "edamame-x/wasm-obfuscator/parser" @wparser,
+} for "test"

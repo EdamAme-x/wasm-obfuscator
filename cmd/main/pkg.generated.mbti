@@ -1,0 +1,16 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "edamame-x/wasm-obfuscator/cmd/main"
+
+// Values
+
+// Errors
+type CliError
+pub impl Eq for CliError
+pub impl Show for CliError
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

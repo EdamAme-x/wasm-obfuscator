@@ -1,0 +1,5 @@
+import {
+  "edamame-x/wasm-obfuscator/obfuscator",
+  "edamame-x/wasm-obfuscator/engine",
+  "moonbitlang/core/bench",
+} for "test"

@@ -1,0 +1,108 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "edamame-x/wasm-obfuscator/obfuscator"
+
+// Values
+pub fn default_config() -> ObfuscationConfig
+
+pub fn fixture_invalid_wasm() -> Bytes
+
+pub fn fixture_invalid_wat() -> String
+
+pub fn fixture_minimal_wasm_add_i32() -> Bytes
+
+pub fn fixture_minimal_wat_add_i32() -> String
+
+pub fn obfuscate(Bytes, ObfuscationConfig) -> ObfuscationResult raise ObfuscationError
+
+pub fn obfuscate_wasm(Bytes, config? : ObfuscationConfig) -> Bytes raise ObfuscationError
+
+pub fn obfuscate_wat(String, ObfuscationConfig) -> ObfuscationResult raise ObfuscationError
+
+pub fn obfuscate_with_single_pass(Bytes, ObfuscationPass, ObfuscationConfig) -> ObfuscationResult raise ObfuscationError
+
+pub fn parse_wat_to_wasm(String) -> Bytes raise ObfuscationError
+
+pub fn run_i32_export(Bytes, String, Array[Int]) -> Int raise ObfuscationError
+
+pub fn silent_test_config() -> ObfuscationConfig
+
+pub fn strict_test_config() -> ObfuscationConfig
+
+pub fn verify_equivalence(Bytes, Bytes, Array[FunctionCase]) -> EquivalenceReport raise ObfuscationError
+
+// Errors
+pub(all) suberror ObfuscationError {
+  InvalidWasmBinary(String)
+  InvalidConfig(String)
+  BudgetExceeded(String)
+  UnsupportedFeature(String)
+}
+pub impl Eq for ObfuscationError
+pub impl Show for ObfuscationError
+
+// Types and methods
+pub(all) struct EquivalenceReport {
+  all_passed : Bool
+  total_cases : Int
+  failed_cases : Int
+}
+pub impl Eq for EquivalenceReport
+pub impl Show for EquivalenceReport
+
+pub(all) struct FunctionCase {
+  export_name : String
+  params : Array[Int]
+  expected_i32 : Int
+}
+pub impl Eq for FunctionCase
+pub impl Show for FunctionCase
+
+pub(all) struct ObfuscationConfig {
+  passes : Array[ObfuscationPass]
+  random_seed : Int
+  max_size_growth_percent : Int
+  max_runtime_slowdown_percent : Int
+  emit_spy_trace : Bool
+}
+pub impl Eq for ObfuscationConfig
+pub impl Show for ObfuscationConfig
+
+pub(all) struct ObfuscationMetrics {
+  input_size : Int
+  output_size : Int
+  size_growth_percent : Int
+  estimated_runtime_slowdown_percent : Int
+}
+pub impl Eq for ObfuscationMetrics
+pub impl Show for ObfuscationMetrics
+
+pub(all) enum ObfuscationPass {
+  RenameIdentifiers
+  SplitBlocks
+  FlattenControlFlow
+  EncodeConstants
+  InsertOpaquePredicates
+}
+pub impl Eq for ObfuscationPass
+pub impl Show for ObfuscationPass
+
+pub(all) struct ObfuscationResult {
+  obfuscated_wasm : Bytes
+  metrics : ObfuscationMetrics
+  spy_events : Array[SpyEvent]
+}
+pub impl Eq for ObfuscationResult
+pub impl Show for ObfuscationResult
+
+pub(all) struct SpyEvent {
+  pass : ObfuscationPass
+  phase : String
+  detail : String
+}
+pub impl Eq for SpyEvent
+pub impl Show for SpyEvent
+
+// Type aliases
+
+// Traits
+

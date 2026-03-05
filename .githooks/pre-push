@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${SKIP_MOON_HOOKS:-0}" == "1" ]]; then
+  echo "[pre-push] SKIP_MOON_HOOKS=1 set, skipping checks."
+  exit 0
+fi
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+if [[ ! -f moon.mod.json ]]; then
+  echo "[pre-push] moon.mod.json not found, skipping MoonBit checks."
+  exit 0
+fi
+
+if ! command -v moon >/dev/null 2>&1; then
+  echo "[pre-push] moon command not found. Install MoonBit first."
+  exit 1
+fi
+
+echo "[pre-push] moon fmt --check"
+moon fmt --check
+
+echo "[pre-push] moon check --target all"
+moon check --target all
+
+echo "[pre-push] moon test --target js"
+moon test --target js
+
+echo "[pre-push] moon test --target wasm-gc"
+moon test --target wasm-gc
+
+echo "[pre-push] bash tests/cli/smoke.sh"
+bash tests/cli/smoke.sh
+
+echo "[pre-push] bash tests/cli/e2e.sh"
+bash tests/cli/e2e.sh
+
+echo "[pre-push] bash tests/cli/options/error_matrix.sh"
+bash tests/cli/options/error_matrix.sh
+
+if command -v node >/dev/null 2>&1; then
+  echo "[pre-push] bash tests/npm/wrapper/wrapper_e2e.sh"
+  bash tests/npm/wrapper/wrapper_e2e.sh
+else
+  echo "[pre-push] node command not found, skipping npm wrapper test."
+fi
+
+echo "[pre-push] moon build --target wasm-gc --release"
+moon build --target wasm-gc --release
+
+echo "[pre-push] moon build --target js --release"
+moon build --target js --release

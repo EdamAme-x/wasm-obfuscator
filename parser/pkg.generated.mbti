@@ -1,0 +1,24 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "edamame-x/wasm-obfuscator/parser"
+
+// Values
+pub fn run_i32_export(Bytes, String, Array[Int]) -> Int raise ParseRuntimeError
+
+pub fn validate_wasm(Bytes) -> Unit raise ParseRuntimeError
+
+pub fn wat_to_wasm(String) -> Bytes raise ParseRuntimeError
+
+// Errors
+pub(all) suberror ParseRuntimeError {
+  ParseError(String)
+  RuntimeError(String)
+}
+pub impl Eq for ParseRuntimeError
+pub impl Show for ParseRuntimeError
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

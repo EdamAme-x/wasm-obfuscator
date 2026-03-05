@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${SKIP_MOON_HOOKS:-0}" == "1" ]]; then
+  echo "[pre-commit] SKIP_MOON_HOOKS=1 set, skipping checks."
+  exit 0
+fi
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+if [[ ! -f moon.mod.json ]]; then
+  echo "[pre-commit] moon.mod.json not found, skipping MoonBit checks."
+  exit 0
+fi
+
+if ! command -v moon >/dev/null 2>&1; then
+  echo "[pre-commit] moon command not found. Install MoonBit first."
+  exit 1
+fi
+
+changed_files="$(git diff --cached --name-only --diff-filter=ACMR)"
+if [[ -z "$changed_files" ]]; then
+  exit 0
+fi
+
+if ! grep -Eq '\.(mbt|mbti|mbt\.md)$|(^|/)moon\.(mod\.json|pkg|pkg\.json)$' <<<"$changed_files"; then
+  echo "[pre-commit] no staged MoonBit files; skipping MoonBit checks."
+  exit 0
+fi
+
+echo "[pre-commit] moon fmt --check"
+moon fmt --check
+
+echo "[pre-commit] moon check --target js"
+moon check --target js

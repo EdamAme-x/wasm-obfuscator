@@ -1,0 +1,5 @@
+import {
+  "moonbitlang/core/buffer",
+  "edamame-x/wasm-obfuscator/internal/wasm" @wasmcodec,
+  "edamame-x/wasm-obfuscator/internal/random" @wobf_random,
+}

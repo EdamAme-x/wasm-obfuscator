@@ -1,0 +1,39 @@
+{
+  "name": "wasm-obfuscator-repo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Semantics-preserving WebAssembly/WAT obfuscation toolkit and CLI implemented in MoonBit.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EdamAme-x/wasm-obfuscator.git"
+  },
+  "homepage": "https://github.com/EdamAme-x/wasm-obfuscator#readme",
+  "bugs": {
+    "url": "https://github.com/EdamAme-x/wasm-obfuscator/issues"
+  },
+  "keywords": [
+    "wasm",
+    "wat",
+    "obfuscation",
+    "moonbit",
+    "cli",
+    "parser"
+  ],
+  "files": [
+    "README.md",
+    "_build/js/release/",
+    "_build/wasm-gc/release/"
+  ],
+  "scripts": {
+    "build": "moon build --target js --release && moon build --target wasm-gc --release",
+    "check": "moon check --target js",
+    "test": "moon test --target js",
+    "smoke": "bash tests/cli/smoke.sh",
+    "prepublishOnly": "pnpm run build && pnpm run test && pnpm run smoke"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
